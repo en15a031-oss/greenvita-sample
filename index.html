@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenVita | 国産大麦若葉 スムースグリーン</title>
+<style>
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    color: #222;
+    background: #fff;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== Variables ===== */
+  :root {
+    --green: #3a7d44;
+    --green-light: #6ab04c;
+    --green-pale: #e8f5e9;
+    --gold: #c8a951;
+    --text: #2c2c2c;
+    --text-sub: #666;
+    --radius: 12px;
+  }
+
+  /* ===== Mobile Nav ===== */
+  .mobile-nav {
+    display: none;
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 300;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 20px;
+    align-items: center; justify-content: space-between;
+  }
+  .mobile-nav-logo { font-size: 18px; font-weight: 900; color: var(--green); letter-spacing: 2px; }
+  .mobile-nav-logo span { display: block; font-size: 9px; font-weight: 400; color: #aaa; letter-spacing: 1px; }
+  .mobile-hamburger {
+    width: 36px; height: 36px; border: none; background: none; cursor: pointer;
+    display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 4px;
+  }
+  .mobile-hamburger span {
+    display: block; height: 2px; background: var(--green); border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .mobile-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .mobile-hamburger.open span:nth-child(2) { opacity: 0; }
+  .mobile-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile Drawer */
+  .mobile-drawer {
+    display: none;
+    position: fixed; top: 57px; left: 0; width: 100%; z-index: 290;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    transform: translateY(-110%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mobile-drawer.open { transform: translateY(0); }
+  .mobile-drawer a {
+    display: block; padding: 14px 24px;
+    font-size: 15px; font-weight: 600; color: var(--text);
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .mobile-drawer a:last-child { border-bottom: none; }
+  .mobile-drawer a:active { background: var(--green-pale); color: var(--green); }
+
+  /* ===== Fixed Right CTA ===== */
+  .fixed-cta {
+    position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+    z-index: 200;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .fixed-cta-btn {
+    writing-mode: vertical-rl;
+    background: var(--gold); color: #fff;
+    font-size: 13px; font-weight: 800; letter-spacing: 2px;
+    padding: 20px 12px; border-radius: 40px;
+    box-shadow: 0 8px 24px rgba(200,169,81,0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+  .fixed-cta-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(200,169,81,0.55); }
+  .fixed-cta-arrow {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--gold); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(200,169,81,0.4);
+    animation: bounce 1.5s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  /* ===== Hero ===== */
+  #hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #52b788 100%);
+    display: flex; align-items: center;
+    padding: 60px 40px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-inner {
+    max-width: 1100px; margin: 0 auto; width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    position: relative; z-index: 1;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold); color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .hero-title {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.25;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .hero-title span { color: #a8e6a3; }
+  .hero-sub {
+    font-size: 16px; color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 32px;
+  }
+  .hero-cta {
+    display: inline-block;
+    background: var(--gold);
+    color: #fff;
+    font-size: 18px; font-weight: 800;
+    padding: 18px 40px; border-radius: 40px;
+    box-shadow: 0 8px 24px rgba(200,169,81,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(200,169,81,0.5); }
+  .hero-note { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 12px; }
+  .hero-visual {
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+  }
+  .hero-product {
+    width: 260px; height: 260px;
+    /* Unsplash License: free for commercial use, no attribution required */
+    background: url('https://images.unsplash.com/photo-1583525999977-2b928def9ab6?auto=format&fit=crop&w=400&q=80') center/cover no-repeat;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: float 4s ease-in-out infinite;
+    overflow: hidden;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-16px); }
+  }
+  .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .hero-tag {
+    background: rgba(255,255,255,0.15); color: #fff;
+    font-size: 12px; padding: 4px 12px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* ===== Section Base ===== */
+  section { padding: 80px 40px; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    color: var(--green); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 900; line-height: 1.4;
+    margin-bottom: 16px;
+  }
+  .section-desc { font-size: 15px; color: var(--text-sub); line-height: 1.9; max-width: 600px; }
+
+  /* ===== Concept ===== */
+  #concept { background: var(--green-pale); }
+  .concept-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px;
+  }
+  .concept-card {
+    background: #fff; border-radius: var(--radius);
+    padding: 32px 24px; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    transition: transform 0.3s;
+  }
+  .concept-card:hover { transform: translateY(-6px); }
+  .concept-icon { font-size: 1.2rem; font-weight: 700; color: var(--green); margin-bottom: 16px; letter-spacing: 0.05em; }
+  .concept-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 10px; color: var(--green); }
+  .concept-card p { font-size: 13px; color: var(--text-sub); line-height: 1.8; }
+
+  /* ===== Survey / Charts ===== */
+  #survey { background: #fff; }
+  .survey-intro { margin-bottom: 48px; }
+  .charts-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  }
+  .chart-item { text-align: center; }
+  .chart-wrap {
+    position: relative; width: 160px; height: 160px;
+    margin: 0 auto 16px;
+  }
+  .chart-wrap svg { transform: rotate(-90deg); }
+  .chart-bg { fill: none; stroke: #e8f5e9; stroke-width: 14; }
+  .chart-fill {
+    fill: none; stroke: var(--green); stroke-width: 14;
+    stroke-linecap: round;
+    stroke-dasharray: 408;
+    stroke-dashoffset: 408;
+    transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .chart-number {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .chart-pct { font-size: 36px; font-weight: 900; color: var(--green); line-height: 1; }
+  .chart-pct-sign { font-size: 18px; font-weight: 700; }
+  .chart-label { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+  .chart-caption { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.5; }
+  .survey-note {
+    text-align: right; font-size: 11px; color: #aaa; margin-top: 32px;
+  }
+
+  /* ===== Voice / Slider ===== */
+  #voice { background: var(--green-pale); overflow: hidden; }
+  .slider-outer { overflow: hidden; margin-top: 48px; }
+  .slider-track {
+    display: flex; gap: 24px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .voice-card {
+    min-width: calc(33.333% - 16px);
+    background: #fff; border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    flex-shrink: 0;
+  }
+  .voice-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .voice-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.03em;
+  }
+  .voice-name { font-size: 14px; font-weight: 700; }
+  .voice-age { font-size: 12px; color: var(--text-sub); }
+  .voice-stars { color: #f4a015; font-size: 14px; margin-bottom: 10px; }
+  .voice-text { font-size: 13px; color: var(--text-sub); line-height: 1.9; }
+  .slider-controls {
+    display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 28px;
+  }
+  .slider-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--green); color: #fff; border: none; cursor: pointer;
+    font-size: 18px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .slider-btn:hover { background: var(--green-light); }
+  .slider-dots { display: flex; gap: 8px; }
+  .slider-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ccc; cursor: pointer; transition: background 0.2s, width 0.2s;
+  }
+  .slider-dot.active { background: var(--green); width: 24px; border-radius: 4px; }
+
+  /* ===== How to Use ===== */
+  #howto { background: #fff; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 48px; position: relative; }
+  .steps::before {
+    content: '';
+    position: absolute; top: 40px; left: 16.666%; right: 16.666%;
+    height: 2px; background: linear-gradient(to right, var(--green), var(--green-light));
+    z-index: 0;
+  }
+  .step { text-align: center; padding: 0 20px; position: relative; z-index: 1; }
+  .step-num {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--green); color: #fff;
+    font-size: 28px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 16px rgba(58,125,68,0.3);
+  }
+  .step h3 { font-size: 16px; font-weight: 800; margin-bottom: 10px; color: var(--green); }
+  .step p { font-size: 13px; color: var(--text-sub); line-height: 1.8; }
+
+  /* ===== FAQ / Accordion ===== */
+  #faq { background: var(--green-pale); }
+  .faq-list { margin-top: 48px; display: flex; flex-direction: column; gap: 12px; }
+  .faq-item {
+    background: #fff; border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .faq-q {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; cursor: pointer;
+    font-size: 15px; font-weight: 700;
+    user-select: none;
+  }
+  .faq-q::before {
+    content: 'Q'; font-size: 18px; font-weight: 900;
+    color: var(--green); margin-right: 12px; flex-shrink: 0;
+  }
+  .faq-q span { flex: 1; }
+  .faq-icon {
+    width: 24px; height: 24px; flex-shrink: 0;
+    color: var(--green); font-size: 20px; font-weight: 300;
+    transition: transform 0.3s;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    padding: 0 24px;
+    font-size: 14px; color: var(--text-sub); line-height: 1.9;
+  }
+  .faq-a::before {
+    content: 'A'; font-size: 14px; font-weight: 900;
+    color: var(--gold); margin-right: 8px;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding: 0 24px 20px; }
+
+  /* ===== CTA ===== */
+  #cta {
+    /* Unsplash License: free for commercial use, no attribution required */
+    background:
+      linear-gradient(135deg, rgba(27,67,50,0.88), rgba(45,106,79,0.85)),
+      url('https://images.unsplash.com/photo-1631832293782-2eda7804489b?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+    text-align: center; padding: 80px 40px;
+    color: #fff;
+  }
+  #cta .section-label { color: #a8e6a3; }
+  #cta .section-title { color: #fff; max-width: 600px; margin: 0 auto 16px; }
+  #cta .section-desc { color: rgba(255,255,255,0.75); margin: 0 auto 40px; }
+  .cta-box {
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 40px;
+    max-width: 500px; margin: 0 auto 32px;
+  }
+  .cta-price {
+    font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 4px;
+    text-decoration: line-through;
+  }
+  .cta-price-current {
+    font-size: 48px; font-weight: 900; color: var(--gold); line-height: 1;
+    margin-bottom: 8px;
+  }
+  .cta-price-current span { font-size: 22px; }
+  .cta-price-note { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 24px; }
+  .cta-btn {
+    display: block; width: 100%;
+    background: var(--gold); color: #fff;
+    font-size: 18px; font-weight: 800;
+    padding: 18px; border-radius: 40px;
+    box-shadow: 0 8px 24px rgba(200,169,81,0.4);
+    transition: transform 0.2s;
+    border: none; cursor: pointer;
+  }
+  .cta-btn:hover { transform: translateY(-2px); }
+  .cta-security { display: flex; gap: 24px; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.6); }
+  .cta-security span::before { content: '✓ '; color: #a8e6a3; }
+
+  /* ===== Footer ===== */
+  footer {
+    background: #111; color: rgba(255,255,255,0.5);
+    padding: 32px 40px; text-align: center; font-size: 12px;
+  }
+
+  /* ===== Scroll Reveal ===== */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== Sidebar TOC ===== */
+  .page-wrapper {
+    display: flex;
+    align-items: flex-start;
+  }
+  .toc-sidebar {
+    position: sticky;
+    top: 0;
+    width: 180px;
+    flex-shrink: 0;
+    padding: 28px 0 24px 20px;
+    align-self: flex-start;
+    min-height: 100vh;
+  }
+  .toc-logo {
+    font-size: 16px; font-weight: 900; color: var(--green);
+    letter-spacing: 2px; padding-left: 14px; margin-bottom: 28px;
+    writing-mode: horizontal-tb;
+  }
+  .toc-logo span { display: block; font-size: 9px; font-weight: 400; color: #aaa; letter-spacing: 1px; margin-top: 2px; }
+  .toc-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #aaa;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-left: 14px;
+  }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 4px; }
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #999;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+  .toc-list a::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ccc;
+    flex-shrink: 0;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .toc-list a:hover { color: var(--green); background: var(--green-pale); }
+  .toc-list a:hover::before { background: var(--green); }
+  .toc-list a.active {
+    color: var(--green);
+    font-weight: 700;
+    background: var(--green-pale);
+  }
+  .toc-list a.active::before {
+    background: var(--green);
+    transform: scale(1.5);
+  }
+  .toc-line {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, #ddd 20%, #ddd 80%, transparent);
+    position: absolute;
+    left: 33px;
+    top: 100px;
+    bottom: 24px;
+  }
+  .page-main { flex: 1; min-width: 0; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1100px) {
+    .toc-sidebar { display: none; }
+  }
+  @media (max-width: 768px) {
+    .mobile-nav { display: flex; }
+    .mobile-drawer { display: block; }
+    section { padding: 60px 20px; }
+    #hero { padding-top: 80px; }
+    .hero-inner { grid-template-columns: 1fr; gap: 32px; text-align: center; }
+    .hero-visual { display: none; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .charts-grid { grid-template-columns: 1fr; gap: 48px; }
+    .voice-card { min-width: calc(100% - 0px); }
+    .steps { grid-template-columns: 1fr; gap: 32px; }
+    .steps::before { display: none; }
+    #cta .section-title { font-size: 24px; }
+    /* スマホ：固定CTAを下部バーに変更 */
+    .fixed-cta {
+      right: auto; top: auto; bottom: 0; left: 0;
+      width: 100%; transform: none;
+      flex-direction: row;
+      background: var(--gold);
+      padding: 0;
+      border-radius: 0;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
+    }
+    .fixed-cta-btn {
+      writing-mode: horizontal-tb;
+      width: 100%; text-align: center;
+      border-radius: 0; padding: 16px;
+      font-size: 15px; letter-spacing: 1px;
+      box-shadow: none;
+    }
+    .fixed-cta-btn:hover { transform: none; box-shadow: none; }
+    .fixed-cta-arrow { display: none; }
+    /* スマホ：コンテンツ下部にCTAバーの高さ分余白 */
+    footer { padding-bottom: 72px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOC Sidebar + Main Wrapper -->
+<div class="page-wrapper">
+<aside class="toc-sidebar">
+  <div class="toc-line"></div>
+  <div class="toc-logo">GreenVita<span>国産大麦若葉</span></div>
+  <div class="toc-title">CONTENTS</div>
+  <ul class="toc-list">
+    <li><a href="#hero" class="toc-link">トップ</a></li>
+    <li><a href="#concept" class="toc-link">選ばれる理由</a></li>
+    <li><a href="#survey" class="toc-link">実感レポート</a></li>
+    <li><a href="#voice" class="toc-link">お客様の声</a></li>
+    <li><a href="#howto" class="toc-link">飲み方</a></li>
+    <li><a href="#faq" class="toc-link">よくある質問</a></li>
+    <li><a href="#cta" class="toc-link">ご注文</a></li>
+  </ul>
+</aside>
+<div class="page-main">
+
+<!-- Mobile Nav (スマホのみ表示) -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-logo">GreenVita<span>国産大麦若葉</span></div>
+  <button class="mobile-hamburger" id="hamburger" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-drawer" id="mobileDrawer">
+  <a href="#concept" class="drawer-link">選ばれる理由</a>
+  <a href="#survey" class="drawer-link">実感レポート</a>
+  <a href="#voice" class="drawer-link">お客様の声</a>
+  <a href="#howto" class="drawer-link">飲み方</a>
+  <a href="#faq" class="drawer-link">よくある質問</a>
+  <a href="#cta" class="drawer-link" style="color:var(--gold);font-weight:800;">→ 今すぐ購入する</a>
+</div>
+
+<!-- Fixed Right CTA -->
+<div class="fixed-cta">
+  <a href="#cta" class="fixed-cta-btn">今すぐ購入する</a>
+  <div class="fixed-cta-arrow">↓</div>
+</div>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">国産 大麦若葉 100%</div>
+      <h1 class="hero-title">
+        毎朝1杯で、<br>
+        <span>内側から</span><br>
+        変わる実感を。
+      </h1>
+      <p class="hero-sub">
+        厳選された国産大麦若葉を低温乾燥でそのまま粉末に。<br>
+        添加物ゼロ、無農薬、美しい深緑が本物の証。
+      </p>
+      <a href="#cta" class="hero-cta">初回限定 50%OFFで試す</a>
+      <p class="hero-note">送料無料・30日間返金保証付き</p>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-product"></div>
+      <div class="hero-tags">
+        <span class="hero-tag">無農薬</span>
+        <span class="hero-tag">添加物ゼロ</span>
+        <span class="hero-tag">国産100%</span>
+        <span class="hero-tag">低温乾燥</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Concept -->
+<section id="concept">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">Feature</p>
+      <h2 class="section-title">選ばれる3つの理由</h2>
+      <p class="section-desc">GreenVitaが多くのお客様に愛され続ける、こだわりのポイントをご紹介します。</p>
+    </div>
+    <div class="concept-grid">
+      <div class="concept-card reveal">
+        <div class="concept-icon">01</div>
+        <h3>産地直送・無農薬</h3>
+        <p>契約農家から直接仕入れた、農薬不使用の大麦若葉のみを使用。安全・安心をお届けします。</p>
+      </div>
+      <div class="concept-card reveal">
+        <div class="concept-icon">02</div>
+        <h3>低温乾燥で栄養まるごと</h3>
+        <p>熱に弱い酵素やビタミンを壊さない低温乾燥製法で、大麦若葉の栄養素をそのままパウダーに。</p>
+      </div>
+      <div class="concept-card reveal">
+        <div class="concept-icon">03</div>
+        <h3>添加物・甘味料ゼロ</h3>
+        <p>余計なものは一切入れない。大麦若葉の自然な甘みと風味だけで飲みやすく仕上げました。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Survey -->
+<section id="survey">
+  <div class="section-inner">
+    <div class="survey-intro reveal">
+      <p class="section-label">Survey</p>
+      <h2 class="section-title">飲み続けた方の<br>実感レポート</h2>
+      <p class="section-desc">GreenVita 継続利用者312名へのアンケート調査結果（2024年12月実施）</p>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-item reveal">
+        <div class="chart-wrap">
+          <svg viewBox="0 0 160 160" width="160" height="160">
+            <circle class="chart-bg" cx="80" cy="80" r="65"/>
+            <circle class="chart-fill" cx="80" cy="80" r="65" data-pct="92"/>
+          </svg>
+          <div class="chart-number">
+            <div class="chart-pct"><span class="chart-counter" data-target="92">0</span><span class="chart-pct-sign">%</span></div>
+          </div>
+        </div>
+        <div class="chart-caption">飲み始めてから<br>継続したいと感じた</div>
+      </div>
+      <div class="chart-item reveal">
+        <div class="chart-wrap">
+          <svg viewBox="0 0 160 160" width="160" height="160">
+            <circle class="chart-bg" cx="80" cy="80" r="65"/>
+            <circle class="chart-fill" cx="80" cy="80" r="65" data-pct="87"/>
+          </svg>
+          <div class="chart-number">
+            <div class="chart-pct"><span class="chart-counter" data-target="87">0</span><span class="chart-pct-sign">%</span></div>
+          </div>
+        </div>
+        <div class="chart-caption">体の調子が整った<br>と感じた</div>
+      </div>
+      <div class="chart-item reveal">
+        <div class="chart-wrap">
+          <svg viewBox="0 0 160 160" width="160" height="160">
+            <circle class="chart-bg" cx="80" cy="80" r="65"/>
+            <circle class="chart-fill" cx="80" cy="80" r="65" data-pct="95"/>
+          </svg>
+          <div class="chart-number">
+            <div class="chart-pct"><span class="chart-counter" data-target="95">0</span><span class="chart-pct-sign">%</span></div>
+          </div>
+        </div>
+        <div class="chart-caption">友人・家族に<br>すすめたいと回答</div>
+      </div>
+    </div>
+    <p class="survey-note">※ 個人の感想であり、効果を保証するものではありません。 n=312</p>
+  </div>
+</section>
+
+<!-- Voice / Slider -->
+<section id="voice">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">Voice</p>
+      <h2 class="section-title">お客様の声</h2>
+    </div>
+    <div class="slider-outer">
+      <div class="slider-track" id="sliderTrack">
+        <div class="voice-card">
+          <div class="voice-header">
+            <div class="voice-avatar">MK</div>
+            <div>
+              <div class="voice-name">M.Kさん</div>
+              <div class="voice-age">34歳・女性・会社員</div>
+            </div>
+          </div>
+          <div class="voice-stars">★★★★★</div>
+          <p class="voice-text">朝にスムージーに混ぜて飲んでいます。色がきれいな緑で、見た目から気分が上がります。1ヶ月続けたら、なんとなく肌の調子が良くなってきた気がして続けています。</p>
+        </div>
+        <div class="voice-card">
+          <div class="voice-header">
+            <div class="voice-avatar">TH</div>
+            <div>
+              <div class="voice-name">T.Hさん</div>
+              <div class="voice-age">41歳・男性・自営業</div>
+            </div>
+          </div>
+          <div class="voice-stars">★★★★★</div>
+          <p class="voice-text">仕事が忙しく野菜不足が気になっていたので試してみました。水に溶かすだけで手軽だし、変な後味もなくて飲みやすい。毎朝の習慣になっています。</p>
+        </div>
+        <div class="voice-card">
+          <div class="voice-header">
+            <div class="voice-avatar">AN</div>
+            <div>
+              <div class="voice-name">A.Nさん</div>
+              <div class="voice-age">28歳・女性・主婦</div>
+            </div>
+          </div>
+          <div class="voice-stars">★★★★☆</div>
+          <p class="voice-text">産後の体調管理のために購入。添加物ゼロというのが安心で選びました。子育て中は食事が偏りがちなので、1杯飲むだけで少し安心できます。</p>
+        </div>
+        <div class="voice-card">
+          <div class="voice-header">
+            <div class="voice-avatar">YS</div>
+            <div>
+              <div class="voice-name">Y.Sさん</div>
+              <div class="voice-age">56歳・男性・管理職</div>
+            </div>
+          </div>
+          <div class="voice-stars">★★★★★</div>
+          <p class="voice-text">健康診断の結果が気になりはじめた年齢。毎日飲み続けて3ヶ月、なんとなく体が軽くなった感じがします。苦みもなくお茶感覚で続けられています。</p>
+        </div>
+        <div class="voice-card">
+          <div class="voice-header">
+            <div class="voice-avatar">RM</div>
+            <div>
+              <div class="voice-name">R.Mさん</div>
+              <div class="voice-age">32歳・女性・フリーランス</div>
+            </div>
+          </div>
+          <div class="voice-stars">★★★★★</div>
+          <p class="voice-text">在宅ワークで運動不足が続いていたので、せめて食から気をつけようと購入。豆乳に混ぜると飲みやすくて美味しい。リピート3回目です！</p>
+        </div>
+      </div>
+    </div>
+    <div class="slider-controls">
+      <button class="slider-btn" id="sliderPrev">&#8249;</button>
+      <div class="slider-dots" id="sliderDots"></div>
+      <button class="slider-btn" id="sliderNext">&#8250;</button>
+    </div>
+  </div>
+</section>
+
+<!-- How to Use -->
+<section id="howto">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">How to Use</p>
+      <h2 class="section-title">かんたん3ステップ</h2>
+      <p class="section-desc">忙しい毎日でも続けられる、シンプルな飲み方。</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>スプーン1杯すくう</h3>
+        <p>付属スプーン1杯（約3g）が1回分。計量の手間がありません。</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>水や豆乳に溶かす</h3>
+        <p>200mlの水・牛乳・豆乳に入れてよく混ぜるだけ。スムージーにも◎</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>毎朝の習慣にする</h3>
+        <p>朝食前に飲むのがおすすめ。まずは3ヶ月継続で実感を。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-label">FAQ</p>
+      <h2 class="section-title">よくあるご質問</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-q"><span>どれくらいで効果を感じますか？</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">個人差がありますが、継続利用者アンケートでは2〜4週間で何らかの変化を感じたという方が多くいらっしゃいます。まずは3ヶ月を目安にお試しください。</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q"><span>妊娠中・授乳中でも飲めますか？</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">大麦若葉100%の食品ですが、妊娠中・授乳中の方は念のためかかりつけ医にご相談のうえご使用ください。</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q"><span>1袋でどのくらい持ちますか？</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">1袋90g入りで、1日1杯（3g）の場合、約30日分です。2杯飲む場合は約15日分となります。</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q"><span>定期縛りはありますか？</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">定期コースでも最低購入回数の縛りはありません。次回お届けの10日前までにご連絡いただければ、いつでも解約可能です。</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q"><span>返金保証はありますか？</span><span class="faq-icon">+</span></div>
+        <div class="faq-a">初回お届け分に限り、お届けから30日以内であれば全額返金保証をお付けしています。まずはお気軽にお試しください。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="section-inner">
+    <p class="section-label">Order</p>
+    <h2 class="section-title">今すぐ始める、<br>毎朝の新習慣。</h2>
+    <p class="section-desc">初回限定50%OFF・送料無料・30日間返金保証。<br>まずは1袋、気軽にお試しください。</p>
+    <div class="cta-box">
+      <div class="cta-price">通常価格 ¥5,980</div>
+      <div class="cta-price-current"><span>¥</span>2,980<span>（税込）</span></div>
+      <div class="cta-price-note">初回限定価格・送料無料</div>
+      <button class="cta-btn">今すぐ注文する →</button>
+    </div>
+    <div class="cta-security">
+      <span>30日間返金保証</span>
+      <span>送料無料</span>
+      <span>SSL暗号化通信</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2024 GreenVita Inc. All rights reserved.｜このサイトはデモサイトです。</p>
+</footer>
+
+</div><!-- /.page-main -->
+</div><!-- /.page-wrapper -->
+
+<script>
+  // ===== Scroll Reveal =====
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // ===== Circle Chart Animation =====
+  const CIRCUMFERENCE = 2 * Math.PI * 65; // r=65
+  const chartObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const section = entry.target;
+        section.querySelectorAll('.chart-fill').forEach(circle => {
+          const pct = parseInt(circle.dataset.pct);
+          const offset = CIRCUMFERENCE * (1 - pct / 100);
+          circle.style.strokeDasharray = CIRCUMFERENCE;
+          circle.style.strokeDashoffset = offset;
+        });
+        section.querySelectorAll('.chart-counter').forEach(counter => {
+          const target = parseInt(counter.dataset.target);
+          let current = 0;
+          const step = target / 60;
+          const timer = setInterval(() => {
+            current = Math.min(current + step, target);
+            counter.textContent = Math.floor(current);
+            if (current >= target) clearInterval(timer);
+          }, 20);
+        });
+        chartObserver.unobserve(section);
+      }
+    });
+  }, { threshold: 0.3 });
+  const surveySection = document.getElementById('survey');
+  if (surveySection) chartObserver.observe(surveySection);
+
+  // ===== Slider =====
+  const track = document.getElementById('sliderTrack');
+  const dotsContainer = document.getElementById('sliderDots');
+  const cards = track.querySelectorAll('.voice-card');
+  const visibleCount = window.innerWidth <= 768 ? 1 : 3;
+  const totalSlides = cards.length - visibleCount + 1;
+  let current = 0;
+
+  // Create dots
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(index, totalSlides - 1));
+    const cardWidth = cards[0].offsetWidth + 24;
+    track.style.transform = `translateX(-${current * cardWidth}px)`;
+    dotsContainer.querySelectorAll('.slider-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  document.getElementById('sliderPrev').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('sliderNext').addEventListener('click', () => goTo(current + 1));
+
+  // Auto-play
+  setInterval(() => goTo((current + 1) % totalSlides), 4000);
+
+  // ===== Mobile Hamburger =====
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('mobileDrawer');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    drawer.classList.toggle('open');
+  });
+  document.querySelectorAll('.drawer-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      drawer.classList.remove('open');
+    });
+  });
+
+  // ===== TOC Active Highlight =====
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sections = ['hero','concept','survey','voice','howto','faq','cta'].map(id => document.getElementById(id));
+  const tocObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => s && tocObserver.observe(s));
+
+  // ===== FAQ Accordion =====
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+</body>
+</html>
